@@ -17,7 +17,7 @@ mimetypes.init()
 def mainSummary(instrument_name, experiment_id, experiment_name):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name)
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary")
     current_app.logger.debug("Looking for summary results for experiment {} in folder {}".format(experiment_name, expResultsFolder))
 
     if not os.path.exists(expResultsFolder):
@@ -45,7 +45,7 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
 def otherPages(instrument_name, experiment_id, experiment_name, page):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, page)
+    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", page)
     current_app.logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment_name, expResultsPage))
 
     if not os.path.exists(expResultsPage):
