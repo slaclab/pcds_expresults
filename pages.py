@@ -1,9 +1,8 @@
 import os
-from flask import Blueprint, Response, abort, current_app, send_file
+from flask import Blueprint, Response, abort, current_app, send_file, render_template
 from config import EXP_RESULTS_FOLDER
 import context
 import mimetypes
-from StringIO import StringIO
 
 __author__ = 'mshankar@slac.stanford.edu'
 
@@ -30,13 +29,16 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
         current_app.logger.debug("Found an report.html")
         return send_file(os.path.join(expResultsFolder, "report.html"), mimetype='text/html')
     # The default is to send a list of folders as links.
-    out = StringIO()
-    out.write("<html><head><link rel='stylesheet' href='../static/gensum.css' type='text/css' /></head><body><ul>")
+    links = []
     for folderName in sorted(os.listdir(expResultsFolder)):
         if os.path.isdir(os.path.join(expResultsFolder, folderName)) and os.path.exists(os.path.join(expResultsFolder, folderName, "report.html")):
-            out.write('<li><a href="{}-{}/{}/report.html">{}</a></li>'.format(experiment_id, experiment_name, folderName, folderName));
-    out.write("</ul></body></html>")
-    return Response(out.getvalue(), mimetype='text/html')
+            links.append(folderName)
+    
+    return render_template("expsummary.html", 
+                           links=links,
+                           experiment_id=experiment_id,
+                           experiment_name=experiment_name 
+                           )
     
 
 @pages_blueprint.route("/<instrument_name>/<experiment_id>-<experiment_name>/<path:page>", methods=["GET"])
