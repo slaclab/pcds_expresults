@@ -33,6 +33,8 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
     for folderName in sorted(os.listdir(expResultsFolder)):
         if os.path.isdir(os.path.join(expResultsFolder, folderName)) and os.path.exists(os.path.join(expResultsFolder, folderName, "report.html")):
             links.append(folderName)
+	else:
+	    current_app.logger.debug("'{}' does not exist?".format(os.path.join(expResultsFolder, folderName, "report.html")))
     
     return render_template("expsummary.html", 
                            links=links,
