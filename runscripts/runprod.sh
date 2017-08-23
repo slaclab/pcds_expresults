@@ -21,7 +21,7 @@ fi
 
 
 # Pick up psdmauth for the test deployment
-export PYTHONPATH="${GG_PRNT_DIR}/psdmauth/src:${PYTHONPATH}"
+export PYTHONPATH="${GG_PRNT_DIR}/release/psdmauth/0.0.6/src:${PYTHONPATH}"
 echo "Using psdmauth from ${PYTHONPATH}"
 
 export ACCESS_LOG_FORMAT='%(h)s %(l)s %({REMOTE_USER}i)s %(t)s "%(r)s" %(s)s %(b)s %(D)s'
