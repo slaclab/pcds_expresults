@@ -1,6 +1,8 @@
 #!/bin/bash
 
-source /reg/g/psdm/bin/conda_setup ""
+export PATH=/reg/g/psdm/sw/conda/inst/miniconda2-prod-rhel7/bin:${PATH}
+source activate ana-1.2.12
+
 
 [ -z "$ROLES_DATABASE_HOST" ] && export ROLES_DATABASE_HOST="localhost"
 [ -z "$ROLES_DATABASE_DB" ] && export ROLES_DATABASE_DB="roles"
