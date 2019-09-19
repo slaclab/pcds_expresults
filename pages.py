@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 def mainSummary(instrument_name, experiment_id, experiment_name):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary")
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", "experiment")
     logger.debug("Looking for summary results for experiment {} in folder {}".format(experiment_name, expResultsFolder))
 
     if not os.path.exists(expResultsFolder):
@@ -35,9 +35,6 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
         logger.debug("Found an report.html")
         return send_file(os.path.join(expResultsFolder, "report.html"), mimetype='text/html')
 
-    if os.path.exists(os.path.join(expResultsFolder, "experiment", "report.html")):
-        logger.debug("Found an experiment report.html")
-        return send_file(os.path.join(expResultsFolder, "experiment", "report.html"), mimetype='text/html')
     # The default is to send a list of folders as links.
     links = []
     for folderName in sorted(os.listdir(expResultsFolder)):
