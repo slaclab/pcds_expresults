@@ -24,7 +24,7 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
 
     if not os.path.isdir(expResultsFolder):
         return Response("The summary stats path {} is not a folder for {}".format(expResultsFolder, experiment_name), mimetype='text/html')
-    
+
     if os.path.exists(os.path.join(expResultsFolder, "report.html")):
         current_app.logger.debug("Found an report.html")
         return send_file(os.path.join(expResultsFolder, "report.html"), mimetype='text/html')
@@ -33,15 +33,15 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
     for folderName in sorted(os.listdir(expResultsFolder)):
         if os.path.isdir(os.path.join(expResultsFolder, folderName)) and os.path.exists(os.path.join(expResultsFolder, folderName, "report.html")):
             links.append(folderName)
-	else:
-	    current_app.logger.debug("'{}' does not exist?".format(os.path.join(expResultsFolder, folderName, "report.html")))
-    
-    return render_template("expsummary.html", 
+    else:
+        current_app.logger.debug("'{}' does not exist?".format(os.path.join(expResultsFolder, folderName, "report.html")))
+
+    return render_template("expsummary.html",
                            links=links,
                            experiment_id=experiment_id,
-                           experiment_name=experiment_name 
+                           experiment_name=experiment_name
                            )
-    
+
 
 @pages_blueprint.route("/<instrument_name>/<experiment_id>-<experiment_name>/<path:page>", methods=["GET"])
 @context.security.authentication_required
