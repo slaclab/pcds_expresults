@@ -1,5 +1,5 @@
 import os
-import urlparse
+import urllib.parse
 
 __author__ = 'mshankar@slac.stanford.edu'
 
