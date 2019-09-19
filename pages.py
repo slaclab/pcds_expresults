@@ -19,11 +19,11 @@ logger = logging.getLogger(__name__)
 def mainSummary(instrument_name, experiment_id, experiment_name):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", "experiment")
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary")
     logger.debug("Looking for summary results for experiment {} in folder {}".format(experiment_name, expResultsFolder))
 
     if not os.path.exists(expResultsFolder):
-        logger.debug("Cannot find the folder %s", expResultsFolder)
+        logger.debug("Cannot find the folder %s; note this could also be a problem with file system permissions.", expResultsFolder)
         return Response("There are no summary stats for {}".format(experiment_name), mimetype='text/html')
 
     logger.debug("Found the path %s", expResultsFolder)
@@ -56,7 +56,7 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
 def otherPages(instrument_name, experiment_id, experiment_name, page):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", "experiment", page)
+    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", page)
     logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment_name, expResultsPage))
 
     if not os.path.exists(expResultsPage):
