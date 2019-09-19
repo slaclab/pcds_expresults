@@ -1,7 +1,7 @@
 from pymysql import cursors
 from psdmauth.auth_client_flask import FlaskSecurityClient
 from psdmauth.auth_server_dal_db import DatabaseDal
-from psdmauth.multimysql import MultiMySQL
+from flask_mysql_util.multimysql import MultiMySQL
 
 __author__ = 'mshankar@slac.stanford.edu'
 

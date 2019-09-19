@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source /reg/g/psdm/sw/dmconda/etc/profile.d/conda.sh
-conda activate /reg/g/psdm/sw/dmconda/envs/psdm_ws_0_0_5
+conda activate /reg/g/psdm/sw/dmconda/envs/psdm_ws_0_0_4
 
 # Assume that we are running the in root folder of this package
 PRNT_DIR=`dirname $PWD`
@@ -21,7 +21,7 @@ fi
 
 
 # Pick up psdmauth for the test deployment
-export PYTHONPATH="${GG_PRNT_DIR}/release/psdmauth/0.0.9/src:${PYTHONPATH}"
+export PYTHONPATH="/reg/g/psdm/web/ws/prod/apps/release/psdmauth/0.0.9/src:${PYTHONPATH}"
 echo "Using psdmauth from ${PYTHONPATH}"
 
 export ACCESS_LOG_FORMAT='%(h)s %(l)s %({REMOTE_USER}i)s %(t)s "%(r)s" %(s)s %(b)s %(D)s'
