@@ -28,6 +28,10 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
     if os.path.exists(os.path.join(expResultsFolder, "report.html")):
         current_app.logger.debug("Found an report.html")
         return send_file(os.path.join(expResultsFolder, "report.html"), mimetype='text/html')
+
+    if os.path.exists(os.path.join(expResultsFolder, "experiment", "report.html")):
+        current_app.logger.debug("Found an experiment report.html")
+        return send_file(os.path.join(expResultsFolder, "experiment", "report.html"), mimetype='text/html')
     # The default is to send a list of folders as links.
     links = []
     for folderName in sorted(os.listdir(expResultsFolder)):
