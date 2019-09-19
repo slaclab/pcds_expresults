@@ -1,4 +1,4 @@
-from MySQLdb import cursors
+from pymysql import cursors
 from psdmauth.auth_client_flask import FlaskSecurityClient
 from psdmauth.auth_server_dal_db import DatabaseDal
 from psdmauth.multimysql import MultiMySQL
