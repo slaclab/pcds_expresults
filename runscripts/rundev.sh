@@ -1,8 +1,7 @@
 #!/bin/bash
 
-export PATH=/reg/g/psdm/sw/conda/inst/miniconda2-prod-rhel7/bin:${PATH}
-source activate ana-1.2.12
-
+source /reg/g/psdm/sw/dmconda/etc/profile.d/conda.sh
+conda activate /reg/g/psdm/sw/dmconda/envs/psdm_ws_0_0_5
 
 [ -z "$ROLES_DATABASE_HOST" ] && export ROLES_DATABASE_HOST="localhost"
 [ -z "$ROLES_DATABASE_DB" ] && export ROLES_DATABASE_DB="roles"
@@ -38,5 +37,3 @@ exec gunicorn start:app -b 0.0.0.0:9471 --worker-class eventlet --reload \
 
 
 #       --log-file /u1/logs/pcds_expresults.log \
-
-

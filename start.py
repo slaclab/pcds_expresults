@@ -15,7 +15,7 @@ app.secret_key = "Create a temporary secret key that is unique to this applicati
 app.debug = DEBUG
 
 if DEBUG:
-    print "Sending all debug messages to the console"
+    print("Sending all debug messages to the console")
     root = logging.getLogger()
     root.setLevel(logging.DEBUG)
     ch = logging.StreamHandler(sys.stdout)
