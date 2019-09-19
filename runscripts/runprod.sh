@@ -27,4 +27,5 @@ echo "Using psdmauth from ${PYTHONPATH}"
 export ACCESS_LOG_FORMAT='%(h)s %(l)s %({REMOTE_USER}i)s %(t)s "%(r)s" %(s)s %(b)s %(D)s'
 exec gunicorn start:app -b 0.0.0.0:9471 --worker-class eventlet --reload \
        --log-level=DEBUG --capture-output --enable-stdio-inheritance \
-       --access-logfile - --access-logformat "${ACCESS_LOG_FORMAT}"
+       --access-logfile - --access-logformat "${ACCESS_LOG_FORMAT}" \
+       --no-sendfile
