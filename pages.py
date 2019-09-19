@@ -56,7 +56,7 @@ def mainSummary(instrument_name, experiment_id, experiment_name):
 def otherPages(instrument_name, experiment_id, experiment_name, page):
     instrument_name = instrument_name.lower()
     # First check to see if the run summary folder exists for the experiment
-    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", page)
+    expResultsPage = os.path.join(EXP_RESULTS_FOLDER, instrument_name, experiment_name, "stats", "summary", , "experiment", page)
     logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment_name, expResultsPage))
 
     if not os.path.exists(expResultsPage):
