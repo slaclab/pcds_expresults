@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source /reg/g/psdm/sw/dmconda/etc/profile.d/conda.sh
-conda activate /reg/g/psdm/sw/dmconda/envs/psdm_ws_0_0_4
+source /reg/g/psdm/sw/dm/conda/etc/profile.d/conda.sh
+conda activate /reg/g/psdm/sw/dm/conda/envs/psdm_ws_0_0_8
 
 # Assume that we are running the in root folder of this package
 PRNT_DIR=`dirname $PWD`

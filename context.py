@@ -1,15 +1,19 @@
-from pymysql import cursors
-from psdmauth.auth_client_flask import FlaskSecurityClient
-from psdmauth.auth_server_dal_db import DatabaseDal
-from flask_mysql_util.multimysql import MultiMySQL
+from flask_authnz import FlaskAuthnz, MongoDBRoles, UserGroups
 
 __author__ = 'mshankar@slac.stanford.edu'
 
 # Application context.
 app = None
 
+MONGODB_HOSTS=os.environ.get("MONGODB_HOSTS", None)
+if not MONGODB_URL:
+    MONGODB_URL = "mongodb://" + MONGODB_HOSTS + "/admin"
+MONGODB_USERNAME=os.environ['MONGODB_USERNAME']
+MONGODB_PASSWORD=os.environ['MONGODB_PASSWORD']
+
+
 # Connection to the authorization database.
-# Note that the prefix=ROLES will look for environment variables
-# ROLES_DATABASE_HOST, $ROLES_DATABASE_DB, $ROLES_DATABASE_USER, $ROLES_DATABASE_PASSWORD etc...
-roles_db = MultiMySQL(prefix="ROLES", cursorclass=cursors.DictCursor)
-security = FlaskSecurityClient(DatabaseDal(roles_db), "LogBook")
+mongorolereaderclient = MongoClient(host=MONGODB_URL, username=MONGODB_USERNAME, password=MONGODB_PASSWORD, tz_aware=True)
+usergroups = UserGroups()
+roleslookup = MongoDBRoles(mongorolereaderclient, usergroups)
+security = FlaskAuthnz(roleslookup, "LogBook")
