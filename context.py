@@ -12,6 +12,7 @@ __author__ = 'mshankar@slac.stanford.edu'
 app = None
 
 MONGODB_HOSTS=os.environ.get("MONGODB_HOSTS", None)
+MONGODB_URL=os.environ.get("MONGODB_URL", None)
 if not MONGODB_URL:
     MONGODB_URL = "mongodb://" + MONGODB_HOSTS + "/admin"
 MONGODB_USERNAME=os.environ['MONGODB_USERNAME']
