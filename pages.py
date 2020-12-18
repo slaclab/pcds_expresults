@@ -11,6 +11,29 @@ pages_blueprint = Blueprint('pages_api', __name__)
 mimetypes.init()
 logger = logging.getLogger(__name__)
 
+# This is copied over from explgbk; that's the original for this method.
+@pages_blueprint.route('/js/<path:path>')
+def send_js(path):
+    pathparts = os.path.normpath(path).split(os.sep)
+    if pathparts[0] == 'python':
+        # This is code for gettting the JS file from the package data of the python module.
+        filepath = pkg_resources.resource_filename(pathparts[1], os.sep.join(pathparts[2:]))
+        if os.path.exists(filepath):
+            # logger.debug("Found file %s as part of a python package resources", filepath)
+            return send_file(filepath)
+
+
+    # $CONDA_PREFIX/lib/node_modules/jquery/dist/
+    filepath = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "node_modules", path)
+    if not os.path.exists(filepath):
+        filepath = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "node_modules", pathparts[0], "dist", *pathparts[1:])
+    if os.path.exists(filepath):
+        return send_file(filepath)
+    else:
+        logger.error("Cannot find static file %s in %s", path, filepath)
+        abort(404)
+        return None
+
 
 @pages_blueprint.route("/<instrument_name>/<experiment_id>-<experiment_name>", methods=["GET"])
 @pages_blueprint.route("/<instrument_name>/<experiment_id>-<experiment_name>/summary.html", methods=["GET"])

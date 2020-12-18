@@ -1,38 +1,62 @@
 <!doctype html>
 <html>
 <head>
-    <title>Data Summary</title>
-
-    <link rel=stylesheet type=text/css href="../static/lib/bootstrap/css/bootstrap.min.css">
-	<link rel=stylesheet type=text/css href="../static/lib/bootstrap/css/bootstrap-theme.min.css">
-    <link rel=stylesheet type=text/css href="../static/expsummary.css">
-    <script type="text/javascript" src="../static/lib/jquery/js/jquery.min.js"></script>
-    <script type="text/javascript" src="../static/lib/underscore-min_1.8.3.js"></script>
-    <script type="text/javascript" src="../static/lib/jquery.noty.packaged.min.js"></script>
-    <script type="text/javascript" src="../static/lib/bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="../static/expsummary.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Data Summary</title>
+  <link rel="stylesheet" type="text/css" href="../js/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../js/@fortawesome/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" type=text/css href="../static/expsummary.css">
+  <script type="text/javascript" src="../js/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="../js/mustache/mustache.min.js"></script>
+  <script type="text/javascript" src="../js/lodash/lodash.min.js"></script>
+  <script type="text/javascript" src="../js/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="../js/@fortawesome/fontawesome-free/js/all.min.js"></script>
 
 </head>
 
 <body>
 <div class="container-fluid">
 <div class="row">
+  <nav class="col-md-1 d-none d-md-block bg-light sidebar" id="summarylinks">
+    <div class="sidebar-sticky">
+      <ul class="nav flex-column">
+        {% for link in links %}
+        <li class="nav-item">
+          <a class="nav-link" data-href="{{ experiment_id }}-{{ experiment_name }}/{{ link }}/report.html">
+            {{ link }}
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </nav>
 
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Data summaries</h3>
-  </div>
-  <div class="panel-body">
-    <div class="list-group">
-{% for link in links %}
-    <a class="list-group-item" href="{{ experiment_id }}-{{ experiment_name }}/{{ link }}/report.html"><span class="glyphicon glyphicon-signal" aria-hidden="true"></span><span class="linktext">{{ link }}</span></a>
-{% endfor %}
-   </div>
-  </div>
- </div>
+  <main role="main" class="col-md ml-sm-auto col-lg pt-3 px-4">
+    <div id="summary_iframe_parent" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+    </div>
+  </main>
 
 </div>
 </div>
+
+<script type="text/javascript">
+$(function() {
+    $(document).ready(function() {
+      $("#summarylinks").find(".nav-link").on("click", function(){
+        let linkref = $(this).attr("data-href");
+        {% raw %}
+        let smtmpl = `<iframe id="summary_iframe" src="{{linkref}}"></iframe>`;
+        {% endraw %}
+        Mustache.parse(smtmpl);
+        var rendered = Mustache.render(smtmpl, {linkref: linkref})
+        $("#summary_iframe_parent").empty().append(rendered);
+        $("#summarylinks").find(".nav-link").removeClass("active")
+        $(this).addClass("active");
+      })
+    })
+})
+</script>
 
 </body>
 </html>
