@@ -18,7 +18,7 @@
 <body>
 <div class="container-fluid">
 <div class="row">
-  <nav class="col-md-1 d-none d-md-block bg-light" id="summarylinks">
+  <nav class="col-md-2 d-none d-md-block" id="summarylinks">
     <div class="sidebar-sticky">
       <ul class="nav flex-column">
         {% for link in links %}
@@ -32,8 +32,8 @@
     </div>
   </nav>
 
-  <main role="main" class="col-md ml-sm-auto col-lg pt-3 px-4">
-    <div id="summary_iframe_parent" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+  <main role="main" class="col-md ml-sm-auto col-lg" id="summary_iframe_grand_parent">
+    <div id="summary_iframe_parent" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
     </div>
   </main>
 
@@ -51,8 +51,8 @@ $(function() {
         Mustache.parse(smtmpl);
         var rendered = Mustache.render(smtmpl, {linkref: linkref})
         $("#summary_iframe_parent").empty().append(rendered);
-        $("#summarylinks").find(".nav-link").removeClass("active")
-        $(this).addClass("active");
+        $("#summarylinks").find(".nav-link").removeClass("curr")
+        $(this).addClass("curr");
       })
     })
 })
