@@ -4,55 +4,92 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Data Summary</title>
-  <link rel="stylesheet" type="text/css" href="../js/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="../js/@fortawesome/fontawesome-free/css/all.min.css">
-  <link rel="stylesheet" type=text/css href="../static/expsummary.css">
-  <script type="text/javascript" src="../js/jquery/jquery.min.js"></script>
-  <script type="text/javascript" src="../js/mustache/mustache.min.js"></script>
-  <script type="text/javascript" src="../js/lodash/lodash.min.js"></script>
-  <script type="text/javascript" src="../js/bootstrap/js/bootstrap.bundle.min.js"></script>
-  <script type="text/javascript" src="../js/@fortawesome/fontawesome-free/js/all.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="../../js/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="../../js/@fortawesome/fontawesome-free/css/all.min.css">
+  <link rel="stylesheet" type=text/css href="../../static/expsummary.css">
+  <script type="text/javascript" src="../../js/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="../../js/mustache/mustache.min.js"></script>
+  <script type="text/javascript" src="../../js/lodash/lodash.min.js"></script>
+  <script type="text/javascript" src="../../js/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script type="text/javascript" src="../../js/@fortawesome/fontawesome-free/js/all.min.js"></script>
+
+  <script type="text/javascript">
+    var experiment_name = "{{ experiment }}";
+    var instrument_name  = "{{ instrument }}";
+    var report_folders_url = "../../ws/{{ instrument }}/{{ experiment }}/reportfolders";
+    var fldrs = {};
+    var fldrtree = {};
+    var currentfldr = "";
+  </script>
+
 
 </head>
 
 <body>
 <div class="container-fluid">
-<div class="row">
-  <nav class="col-md-2 d-none d-md-block" id="summarylinks">
-    <div class="sidebar-sticky">
-      <ul class="nav flex-column">
-        {% for link in links %}
-        <li class="nav-item">
-          <a class="nav-link" data-href="{{ experiment_id }}-{{ experiment_name }}/{{ link }}/report.html">
-            {{ link }}
-          </a>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </nav>
+  <div class="row"><span id="homebtn"><i class="fas fa-home fa-lg"></i></span></div>
+  <div class="row">
+    <nav class="col-md-2 d-none d-md-block" id="summarylinks">
+      <div class="sidebar-sticky">
+        <ul class="nav flex-column">
 
-  <main role="main" class="col-md ml-sm-auto col-lg" id="summary_iframe_grand_parent">
-    <div id="summary_iframe_parent" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
-    </div>
-  </main>
+        </ul>
+      </div>
+    </nav>
 
-</div>
+    <main role="main" class="col-md ml-sm-auto col-lg" id="summary_iframe_grand_parent">
+      <div id="summary_iframe_parent" class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center border-bottom">
+      </div>
+    </main>
+
+  </div>
 </div>
 
 <script type="text/javascript">
 $(function() {
     $(document).ready(function() {
-      $("#summarylinks").find(".nav-link").on("click", function(){
-        let linkref = $(this).attr("data-href");
-        {% raw %}
-        let smtmpl = `<iframe id="summary_iframe" src="{{linkref}}"></iframe>`;
-        {% endraw %}
-        Mustache.parse(smtmpl);
-        var rendered = Mustache.render(smtmpl, {linkref: linkref})
-        $("#summary_iframe_parent").empty().append(rendered);
-        $("#summarylinks").find(".nav-link").removeClass("curr")
-        $(this).addClass("curr");
+      {% raw %}
+      let toplnktmpl = `{{#.}}<li class="nav-item"><a class="nav-link" data-fldr="{{.}}">{{.}}</a></li>{{/.}}`;
+      let smtmpl = `<iframe id="summary_iframe" src="{{linkref}}"></iframe>`;
+      {% endraw %}
+      Mustache.parse(smtmpl); Mustache.parse(toplnktmpl);
+      $.get(report_folders_url)
+      .done(function(d0){
+        _.each(d0.value, function(fldr){
+          fldr["parts"] = _.split(fldr["root"], "/");
+          fldr["top"] = fldr["parts"][0];
+          for(let i = 0; i < fldr["parts"].length; i++) {
+            let fldrpath = _.join(fldr["parts"].slice(0, i+1), "/");
+            if(_.isNil(_.get(fldrtree, fldrpath))) { fldrtree[fldrpath] = [] }
+            let remaining = fldr["parts"].slice(i+1, fldr["parts"].length);
+            if ( remaining.length > 0 ) { fldrtree[fldrpath].push(remaining[0]) } else { fldrs[fldrpath] =  fldr}
+          }
+        })
+        let renderFolders = function(fldrnames) {
+          let rendered = $(Mustache.render(toplnktmpl, fldrnames));
+          rendered.find(".nav-link").on("click", function(){
+            let fldr = currentfldr + $(this).attr("data-fldr"), childfldrs = _.get(fldrtree, fldr, []);
+            if(_.isEmpty(childfldrs)) {
+              var rendered = Mustache.render(smtmpl, {linkref: fldrs[fldr]["root"]+"/report.html"})
+              $("#summary_iframe_parent").empty().append(rendered);
+              $("#summarylinks").find(".nav-link").removeClass("curr")
+              $(this).addClass("curr");
+            } else {
+              $("#summary_iframe_parent").empty();
+              currentfldr = fldr + "/";
+              renderFolders(childfldrs);
+            }
+          })
+          $("#summarylinks").find("ul").empty().append(rendered);
+        }
+
+        renderFolders(_.uniq(_.map(fldrs, function(x){ return x["parts"][0] })));
+
+        $("#homebtn").on("click", function(){
+          currentfldr = "";
+          $("#summary_iframe_parent").empty();
+          renderFolders(_.uniq(_.map(fldrs, function(x){ return x["parts"][0] })));
+        })
       })
     })
 })

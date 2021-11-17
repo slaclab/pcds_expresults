@@ -36,3 +36,8 @@ body {
     height: 100%;
     border: none;
 }
+
+#homebtn {
+  padding: 0.5rem;
+  color: #1E48DF;
+}
