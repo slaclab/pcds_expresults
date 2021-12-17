@@ -34,13 +34,29 @@ def send_js(path):
         abort(404)
         return None
 
+def set_experiment_and_instrument(wrapped_function):
+    """
+    Decorator to put in the experiment name and instrument for flask_authnz
+    """
+    @wraps(wrapped_function)
+    def function_interceptor(*args, **kwargs):
+        experiment_name = kwargs.get('experiment_name', None)
+        instrument = kwargs.get('instrument', None)
+        if experiment_name and instrument:
+            g.experiment_name = experiment_name
+            g.instrument = instrument
+            return wrapped_function(*args, **kwargs)
+        abort(403)
+        return None
+
+    return function_interceptor
+
 @pages_blueprint.route("/<instrument>/<experiment_name>/", methods=["GET"])
 @context.security.authentication_required
+@set_experiment_and_instrument
 @context.security.authorization_required("read")
 def mainSummary(instrument, experiment_name):
     instrument = instrument.lower()
-    g.experiment_name = experiment_name
-    g.instrument = instrument
 
     # First check to see if the run summary folder exists for the experiment
     expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
@@ -64,11 +80,10 @@ def mainSummary(instrument, experiment_name):
 
 @pages_blueprint.route("/<instrument>/<experiment_name>/<path:page>", methods=["GET"])
 @context.security.authentication_required
+@set_experiment_and_instrument
 @context.security.authorization_required("read")
 def otherPages(instrument, experiment_name, page):
     instrument = instrument.lower()
-    g.experiment_name = experiment_name
-    g.instrument = instrument
     expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
     expResultsPage = os.path.join(expResultsFolder, page)
     logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment_name, expResultsPage))
@@ -83,6 +98,7 @@ def otherPages(instrument, experiment_name, page):
 
 @pages_blueprint.route("/ws/<instrument>/<experiment_name>/reportfolders", methods=["GET"])
 @context.security.authentication_required
+@set_experiment_and_instrument
 @context.security.authorization_required("read")
 def svc_walk_stats_summary_tree(instrument, experiment_name):
     """
@@ -90,8 +106,6 @@ def svc_walk_stats_summary_tree(instrument, experiment_name):
     Return an array of dicts of paths with report.html's in them. For example, if subF1/subF2/subf-uglymol/report.html, return { "root": "subF1/subF2/subf-uglymol" }
     """
     instrument = instrument.lower()
-    g.experiment_name = experiment_name
-    g.instrument = instrument
     expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
     fldrs = []
     for (root, dirs, files) in os.walk(expResultsFolder, followlinks=False):
