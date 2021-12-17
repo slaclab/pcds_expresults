@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Blueprint, Response, abort, current_app, send_file, render_template, jsonify
+from flask import Blueprint, Response, abort, current_app, send_file, render_template, jsonify, g
 from config import EXP_RESULTS_FOLDER
 import context
 import mimetypes
@@ -34,39 +34,44 @@ def send_js(path):
         abort(404)
         return None
 
-@pages_blueprint.route("/<instrument>/<experiment>/", methods=["GET"])
+@pages_blueprint.route("/<instrument>/<experiment_name>/", methods=["GET"])
 @context.security.authentication_required
 @context.security.authorization_required("read")
-def mainSummary(instrument, experiment):
+def mainSummary(instrument, experiment_name):
     instrument = instrument.lower()
+    g.experiment_name = experiment_name
+    g.instrument = instrument
+
     # First check to see if the run summary folder exists for the experiment
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment, "stats", "summary")
-    logger.debug("Looking for summary results for experiment {} in folder {}".format(experiment, expResultsFolder))
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
+    logger.debug("Looking for summary results for experiment {} in folder {}".format(experiment_name, expResultsFolder))
 
     if not os.path.exists(expResultsFolder):
         logger.debug("Cannot find the folder %s; note this could also be a problem with file system permissions.", expResultsFolder)
-        return Response("There are no summary stats for {}".format(experiment), mimetype='text/html')
+        return Response("There are no summary stats for {}".format(experiment_name), mimetype='text/html')
 
     logger.debug("Found the path %s", expResultsFolder)
     if not os.path.isdir(expResultsFolder):
-        return Response("The summary stats path {} is not a folder for {}".format(expResultsFolder, experiment), mimetype='text/html')
+        return Response("The summary stats path {} is not a folder for {}".format(expResultsFolder, experiment_name), mimetype='text/html')
 
     logger.debug("Found the folder %s", expResultsFolder)
     if os.path.exists(os.path.join(expResultsFolder, "report.html")):
         logger.debug("Found an report.html")
         return send_file(os.path.join(expResultsFolder, "report.html"), mimetype='text/html')
 
-    return render_template("expsummary.html", experiment=experiment, instrument=instrument)
+    return render_template("expsummary.html", experiment=experiment_name, instrument=instrument)
 
 
-@pages_blueprint.route("/<instrument>/<experiment>/<path:page>", methods=["GET"])
+@pages_blueprint.route("/<instrument>/<experiment_name>/<path:page>", methods=["GET"])
 @context.security.authentication_required
 @context.security.authorization_required("read")
-def otherPages(instrument, experiment, page):
+def otherPages(instrument, experiment_name, page):
     instrument = instrument.lower()
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment, "stats", "summary")
+    g.experiment_name = experiment_name
+    g.instrument = instrument
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
     expResultsPage = os.path.join(expResultsFolder, page)
-    logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment, expResultsPage))
+    logger.debug("Looking for page {} for experiment {} in folder {}".format(page, experiment_name, expResultsPage))
 
     if os.path.exists(expResultsPage):
         return send_file(expResultsPage, mimetypes.guess_type(expResultsPage)[0])
@@ -76,16 +81,18 @@ def otherPages(instrument, experiment, page):
     return
 
 
-@pages_blueprint.route("/ws/<instrument>/<experiment>/reportfolders", methods=["GET"])
+@pages_blueprint.route("/ws/<instrument>/<experiment_name>/reportfolders", methods=["GET"])
 @context.security.authentication_required
 @context.security.authorization_required("read")
-def svc_walk_stats_summary_tree(instrument, experiment):
+def svc_walk_stats_summary_tree(instrument, experiment_name):
     """
     Walk the stats summary and return a list of paths that have report.htmls in them.
     Return an array of dicts of paths with report.html's in them. For example, if subF1/subF2/subf-uglymol/report.html, return { "root": "subF1/subF2/subf-uglymol" }
     """
     instrument = instrument.lower()
-    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment, "stats", "summary")
+    g.experiment_name = experiment_name
+    g.instrument = instrument
+    expResultsFolder = os.path.join(EXP_RESULTS_FOLDER, instrument, experiment_name, "stats", "summary")
     fldrs = []
     for (root, dirs, files) in os.walk(expResultsFolder, followlinks=False):
         if "report.html" in files:
