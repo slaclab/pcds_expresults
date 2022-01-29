@@ -112,4 +112,4 @@ def svc_walk_stats_summary_tree(instrument, experiment_name):
     for (root, dirs, files) in os.walk(expResultsFolder, followlinks=False):
         if "report.html" in files:
             fldrs.append({"root": root[len(expResultsFolder)+1:], "hasReport": True})
-    return jsonify({'success': True, 'value': sorted(fldrs, key=lambda x: x["root"])})
+    return jsonify({'success': True, 'value': sorted(fldrs, key=lambda x: x["root"], reverse=True)})
