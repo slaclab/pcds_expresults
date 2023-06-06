@@ -1,0 +1,59 @@
+---
+ kind: Deployment
+ apiVersion: apps/v1
+ metadata:
+   name: pcdsexpres
+   labels:
+     app: pcdsexpres
+ spec:
+   replicas: 1
+   selector:
+     matchLabels:
+       app: pcdsexpres
+   template:
+     metadata:
+       labels:
+         app: pcdsexpres
+     spec:
+      containers:
+      - name: pcdsexpres
+        image: pcdsexpres:latest
+        imagePullPolicy: IfNotPresent
+        envFrom:
+        - configMapRef:
+            name: pcdsexpresconfigs
+        volumeMounts:
+        # general filesystems
+        - name: sdf
+          mountPath: /sdf/data/lcls/ds/
+          readOnly: true
+        - name: ldapconf
+          mountPath: /etc/openldap/ldap.conf
+          readOnly: true
+        - name: pcdsexpres-secrets
+          mountPath: /work/secrets
+          readOnly: true
+      imagePullSecrets:
+      - name: scrcred
+      volumes:
+      - name: sdf
+        hostPath:
+          path: /sdf/data/lcls/ds/
+      - name: ldapconf
+        hostPath:
+          path: /etc/openldap/ldap.conf
+      - name: pcdsexpres-secrets
+        secret:
+          secretName: pcdsexpres-secrets
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pcdsexpressvc
+spec:
+  selector:
+    app: pcdsexpres
+  ports:
+    - name: http
+      protocol: TCP
+      port: 5000

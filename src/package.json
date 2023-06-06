@@ -1,0 +1,35 @@
+{
+    "name": "pcdsexpres",
+    "version": "0.0.1",
+    "private": true,
+    "dependencies": {
+      "@fortawesome/fontawesome-free": "^5.13.0",
+      "bootstrap": "^4.5.0",
+      "jquery": "^3.6.3",
+      "lodash": "^4.17.21",
+      "mustache": "^4.2.0",
+      "sass": "^1.58.1"
+    },
+    "scripts": {},
+    "eslintConfig": {},
+    "browserslist": {
+      "production": [
+        ">0.2%",
+        "not dead",
+        "not op_mini all"
+      ],
+      "development": [
+        "last 1 chrome version",
+        "last 1 firefox version",
+        "last 1 safari version"
+      ]
+    },
+    "browser": {
+      "image-size": false,
+      "fs": false,
+      "path": false,
+      "os": false,
+      "buffer": false
+    }
+  }
+  

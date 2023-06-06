@@ -1,0 +1,34 @@
+namespace: dev
+
+configMapGenerator:
+- name: pcdsexpresconfigs
+  literals:
+  - EXP_RESULTS_FOLDER="/sdf/data/lcls/ds/"
+  - FLASK_AUTHNZ_USER_HEADER="HTTP_REMOTEUSER"
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+bases:
+- ../../base
+
+images:
+- name: pcdsexpres
+  newName: scr.svc.stanford.edu/psdm/psdm_k8s_images/slaclab/pcdsexpres
+  newTag: 0.0.4
+
+secretGenerator:
+- name: pcdsexpres-secrets
+  files:
+  - etc/.secrets/username
+  - etc/.secrets/password
+  - etc/.secrets/hosts
+
+patchesJson6902:
+- target:
+    kind: Ingress
+    name: pcdsexpresingress
+  patch: |-
+    - op: replace
+      path: /spec/rules/0/http/paths/0/path
+      value: /devexpresults/(.*)

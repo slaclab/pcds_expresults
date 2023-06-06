@@ -25,9 +25,9 @@ def send_js(path):
 
 
     # $CONDA_PREFIX/lib/node_modules/jquery/dist/
-    filepath = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "node_modules", path)
+    filepath = os.path.join("node_modules", path)
     if not os.path.exists(filepath):
-        filepath = os.path.join(os.getenv("CONDA_PREFIX"), "lib", "node_modules", pathparts[0], "dist", *pathparts[1:])
+        filepath = os.path.join("node_modules", pathparts[0], "dist", *pathparts[1:])
     if os.path.exists(filepath):
         return send_file(filepath)
     else:
