@@ -4,7 +4,7 @@ configMapGenerator:
 - name: pcdsexpresconfigs
   literals:
   - EXP_RESULTS_FOLDER="/sdf/data/lcls/ds/"
-  - FLASK_AUTHNZ_USER_HEADER="HTTP_REMOTEUSER"
+  - FLASK_AUTHNZ_USER_HEADER="HTTP_X_VOUCH_IDP_CLAIMS_NAME"
 
 generatorOptions:
   disableNameSuffixHash: true
