@@ -31,4 +31,4 @@ patchesJson6902:
   patch: |-
     - op: replace
       path: /spec/rules/0/http/paths/0/path
-      value: /pcdsexpresults/(.*)
+      value: /experiment_results/(.*)
