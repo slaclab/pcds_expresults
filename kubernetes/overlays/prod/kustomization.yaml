@@ -5,6 +5,9 @@ configMapGenerator:
   literals:
   - EXP_RESULTS_FOLDER="/sdf/data/lcls/ds/"
   - FLASK_AUTHNZ_USER_HEADER="HTTP_X_VOUCH_IDP_CLAIMS_NAME"
+- name: pcdsexpresldapconf
+  files:
+      - ldap.conf
 
 generatorOptions:
   disableNameSuffixHash: true

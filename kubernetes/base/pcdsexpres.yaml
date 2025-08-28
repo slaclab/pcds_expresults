@@ -27,8 +27,8 @@
         - name: lclsdata
           mountPath: /sdf/data/lcls
           readOnly: true          
-        - name: ldapconf
-          mountPath: /etc/openldap/ldap.conf
+        - name: pcdsexpresldapconf
+          mountPath: /etc/openldap
           readOnly: true
         - name: pcdsexpres-secrets
           mountPath: /work/secrets
@@ -39,9 +39,12 @@
       - name: lclsdata
         persistentVolumeClaim:
           claimName: pcdsexpres-lcls-data
-      - name: ldapconf
-        hostPath:
-          path: /etc/openldap/ldap.conf
+      - name: pcdsexpresldapconf
+        configMap:
+          name: pcdsexpresldapconf
+          items:
+            - key: ldap.conf
+              path: ldap.conf
       - name: pcdsexpres-secrets
         secret:
           secretName: pcdsexpres-secrets
