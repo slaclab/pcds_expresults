@@ -24,9 +24,9 @@
             name: pcdsexpresconfigs
         volumeMounts:
         # general filesystems
-        - name: sdf
-          mountPath: /sdf/data/lcls/ds/
-          readOnly: true
+        - name: lclsdata
+          mountPath: /sdf/data/lcls
+          readOnly: true          
         - name: ldapconf
           mountPath: /etc/openldap/ldap.conf
           readOnly: true
@@ -36,15 +36,28 @@
       imagePullSecrets:
       - name: scrcred
       volumes:
-      - name: sdf
-        hostPath:
-          path: /sdf/data/lcls/ds/
+      - name: lclsdata
+        persistentVolumeClaim:
+          claimName: pcdsexpres-lcls-data
       - name: ldapconf
         hostPath:
           path: /etc/openldap/ldap.conf
       - name: pcdsexpres-secrets
         secret:
           secretName: pcdsexpres-secrets
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pcdsexpres-lcls-data
+  labels:
+    app: pcdsexpres-lcls-data
+spec:
+  accessModes: [ReadOnlyMany]
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: sdf-data-lcls
 ---
 apiVersion: v1
 kind: Service
