@@ -14,7 +14,7 @@ bases:
 
 images:
 - name: pcdsexpres
-  newName: scr.svc.stanford.edu/psdm/psdm_k8s_images/slaclab/pcdsexpres
+  newName: cr.stanford.edu/psdm/psdm_k8s_images/slaclab/pcdsexpres
   newTag: 0.0.4
 
 secretGenerator:

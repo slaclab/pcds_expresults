@@ -34,7 +34,7 @@
           mountPath: /work/secrets
           readOnly: true
       imagePullSecrets:
-      - name: scrcred
+      - name: crcred
       volumes:
       - name: lclsdata
         persistentVolumeClaim:
